@@ -11,9 +11,8 @@ function validateEnvironment() {
     "JWT_ACCESS_SECRET",
     "JWT_REFRESH_SECRET",
     "GROQ_API_KEY",
-    "BREVO_SMTP_USER",
-    "BREVO_SMTP_KEY",
-    "BREVO_SENDER_EMAIL"
+   "BREVO_API_KEY",
+"BREVO_SENDER_EMAIL"
   ];
 
   const missing = required.filter((key) => !process.env[key]);
