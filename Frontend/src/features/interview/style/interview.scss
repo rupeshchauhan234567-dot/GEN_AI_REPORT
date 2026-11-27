@@ -1,0 +1,770 @@
+// ── Tokens (same dark palette + pink accent as before) ────────────────────────
+$bg-page: #0d1117;
+$bg-card: #161b22;
+$bg-panel: #1c2230;
+$border-color: #2a3348;
+$border-hover: #3a4660;
+$text-primary: #e6edf3;
+$text-secondary: #a3acb8;
+$text-muted: #7d8590;
+$accent: #ff2d78;
+$violet: #7658e8;
+$font-stack: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+// severity palette
+$severity-high: #ff4d4d;
+$severity-medium: #f5a623;
+$severity-low: #3fb950;
+
+$ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+*::-webkit-scrollbar {
+    display: none;
+}
+
+// Glass panel with a quiet border that lights up on hover
+@mixin glass-panel($radius: 1rem) {
+    position: relative;
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
+        rgba($bg-card, 0.78);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: $radius;
+    box-shadow: 0 12px 32px -18px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+        border-color: rgba($accent, 0.35);
+        box-shadow:
+            0 12px 32px -18px rgba(0, 0, 0, 0.7),
+            0 0 26px -10px rgba($accent, 0.45),
+            inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+}
+
+@mixin section-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: $text-muted;
+    margin: 0;
+}
+
+// ── Loading ───────────────────────────────────────────────────────────────────
+.loading-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    background: $bg-page;
+    color: $text-secondary;
+    font-family: $font-stack;
+
+    h1 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    &__spinner {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: 3px solid rgba($accent, 0.2);
+        border-top-color: $accent;
+        animation: spin 0.8s linear infinite;
+    }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+// ── Page Shell ────────────────────────────────────────────────────────────────
+.interview-page {
+    width: 100%;
+    min-height: 100vh;
+    background:
+        radial-gradient(52rem 34rem at 88% -8%, rgba($accent, 0.09), transparent 60%),
+        radial-gradient(48rem 36rem at -8% 8%, rgba($violet, 0.12), transparent 60%),
+        $bg-page;
+    color: $text-primary;
+    font-family: $font-stack;
+    padding: 1.5rem;
+}
+
+// ── 3-Column Layout ───────────────────────────────────────────────────────────
+.interview-layout {
+    display: grid;
+    grid-template-columns: 230px minmax(0, 1fr) 260px;
+    grid-template-areas: 'rail content side';
+    gap: 1.25rem;
+    align-items: start;
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
+}
+
+// ── Left rail (sections + resume PDF) ─────────────────────────────────────────
+.interview-rail {
+    grid-area: rail;
+    position: sticky;
+    top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.interview-nav {
+    @include glass-panel;
+    padding: 1.25rem 0.85rem;
+
+    &__label {
+        @include section-label;
+        padding: 0 0.75rem;
+        margin-bottom: 0.6rem;
+    }
+
+    &__items {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    &__item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        width: 100%;
+        padding: 0.7rem 0.75rem;
+        background: none;
+        border: none;
+        border-radius: 0.6rem;
+        color: $text-muted;
+        font-family: $font-stack;
+        font-size: 0.875rem;
+        cursor: pointer;
+        text-align: left;
+        transition: background-color 0.2s ease, color 0.2s ease;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.04);
+            color: $text-primary;
+        }
+
+        &:focus-visible {
+            outline: 2px solid rgba($accent, 0.6);
+            outline-offset: 2px;
+        }
+
+        &--active {
+            color: $accent;
+
+            &:hover {
+                background-color: transparent;
+                color: $accent;
+            }
+        }
+    }
+
+    &__pill {
+        position: absolute;
+        inset: 0;
+        border-radius: 0.6rem;
+        background: rgba($accent, 0.1);
+        border: 1px solid rgba($accent, 0.25);
+        box-shadow: 0 0 18px -6px rgba($accent, 0.5);
+    }
+
+    &__icon,
+    &__text {
+        position: relative;
+    }
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+    }
+}
+
+// ── Center Content ────────────────────────────────────────────────────────────
+.interview-content {
+    grid-area: content;
+    @include glass-panel(1.1rem);
+    padding: 1.75rem 2rem 2.5rem;
+    min-width: 0;
+    min-height: calc(100vh - 3rem);
+}
+
+.content-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid $border-color;
+
+    h2 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        color: $text-primary;
+        margin: 0;
+    }
+
+    &__count {
+        font-size: 0.78rem;
+        color: $text-secondary;
+        background-color: rgba(255, 255, 255, 0.04);
+        padding: 0.18rem 0.65rem;
+        border-radius: 2rem;
+        border: 1px solid $border-color;
+    }
+}
+
+// ── Question Cards ────────────────────────────────────────────────────────────
+.q-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.q-card {
+    background-color: rgba($bg-panel, 0.8);
+    border: 1px solid $border-color;
+    border-radius: 0.8rem;
+    overflow: hidden;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+
+    &:hover {
+        border-color: rgba($accent, 0.4);
+        box-shadow: 0 0 22px -10px rgba($accent, 0.5);
+    }
+
+    &--open {
+        border-color: rgba($accent, 0.3);
+        background-color: $bg-panel;
+    }
+
+    &__header {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.8rem;
+        width: 100%;
+        padding: 1rem 1.1rem;
+        background: none;
+        border: none;
+        color: inherit;
+        font-family: inherit;
+        text-align: left;
+        cursor: pointer;
+
+        &:focus-visible {
+            outline: 2px solid rgba($accent, 0.6);
+            outline-offset: -2px;
+        }
+    }
+
+    &__index {
+        flex-shrink: 0;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: $accent;
+        background-color: rgba($accent, 0.1);
+        border: 1px solid rgba($accent, 0.2);
+        border-radius: 0.3rem;
+        padding: 0.15rem 0.4rem;
+        margin-top: 2px;
+    }
+
+    &__question {
+        flex: 1;
+        font-size: 0.92rem;
+        font-weight: 500;
+        color: $text-primary;
+        line-height: 1.55;
+    }
+
+    &__chevron {
+        flex-shrink: 0;
+        display: flex;
+        color: $text-muted;
+        transition: transform 0.3s $ease, color 0.2s ease;
+        margin-top: 2px;
+
+        &--open {
+            transform: rotate(180deg);
+            color: $accent;
+        }
+    }
+
+    &__collapse {
+        overflow: hidden;
+    }
+
+    &__body {
+        padding: 0.9rem 1.1rem 1.1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+        border-top: 1px solid $border-color;
+    }
+
+    &__section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+
+        p {
+            margin: 0;
+            font-size: 0.86rem;
+            color: $text-secondary;
+            line-height: 1.7;
+            max-width: 75ch;
+        }
+    }
+
+    &__tag {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        padding: 0.15rem 0.55rem;
+        border-radius: 0.3rem;
+        width: fit-content;
+
+        &--intention {
+            color: #a78bfa;
+            background-color: rgba(#a78bfa, 0.1);
+            border: 1px solid rgba(#a78bfa, 0.22);
+        }
+
+        &--answer {
+            color: $severity-low;
+            background-color: rgba($severity-low, 0.1);
+            border: 1px solid rgba($severity-low, 0.22);
+        }
+    }
+}
+
+// ── Road Map ──────────────────────────────────────────────────────────────────
+.roadmap-list {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    // timeline line, drawn on scroll by GSAP
+    &__line {
+        position: absolute;
+        left: 28px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(to bottom, $accent, rgba($accent, 0.1));
+        border-radius: 1px;
+        transform-origin: top center;
+    }
+}
+
+.roadmap-day {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0.35rem 0;
+    padding: 0.85rem 1rem 0.85rem 3.5rem;
+    position: relative;
+    border: 1px solid transparent;
+    border-radius: 0.8rem;
+    transition: border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+
+    &:hover {
+        border-color: rgba($accent, 0.3);
+        background-color: rgba(255, 255, 255, 0.02);
+        box-shadow: 0 0 22px -12px rgba($accent, 0.5);
+    }
+
+    // dot on timeline
+    &::before {
+        content: '';
+        position: absolute;
+        left: 20px;
+        top: 1.2rem;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background-color: $bg-card;
+        border: 2px solid $accent;
+        box-shadow: 0 0 10px rgba($accent, 0.45);
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+    &__badge {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: $accent;
+        background-color: rgba($accent, 0.1);
+        border: 1px solid rgba($accent, 0.25);
+        padding: 0.1rem 0.55rem;
+        border-radius: 2rem;
+    }
+
+    &__focus {
+        margin: 0;
+        font-size: 0.98rem;
+        font-weight: 600;
+        color: $text-primary;
+    }
+
+    &__tasks {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+
+        li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            font-size: 0.86rem;
+            color: $text-secondary;
+            line-height: 1.6;
+        }
+    }
+
+    &__bullet {
+        flex-shrink: 0;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background-color: $text-muted;
+        margin-top: 9px;
+    }
+}
+
+// ── Right Sidebar ─────────────────────────────────────────────────────────────
+.interview-sidebar {
+    grid-area: side;
+    position: sticky;
+    top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.side-panel {
+    @include glass-panel;
+    padding: 1.25rem;
+}
+
+// Match Score
+.match-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.9rem;
+
+    &__label {
+        @include section-label;
+        align-self: flex-start;
+    }
+
+    &__sub {
+        margin: 0;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-align: center;
+        color: $text-secondary;
+    }
+}
+
+.score-ring {
+    position: relative;
+    width: 150px;
+    height: 150px;
+
+    svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+        overflow: visible;
+    }
+
+    &__track {
+        fill: none;
+        stroke: rgba(255, 255, 255, 0.07);
+        stroke-width: 8;
+    }
+
+    &__bar {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 8;
+        stroke-linecap: round;
+        filter: drop-shadow(0 0 6px currentColor);
+    }
+
+    &__label {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $text-primary;
+    }
+
+    &__value {
+        font-size: 2.2rem;
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
+    }
+
+    &__pct {
+        margin-left: 0.1rem;
+        font-size: 0.9rem;
+        color: $text-muted;
+    }
+
+    &--high { color: $severity-low; }
+    &--mid { color: $severity-medium; }
+    &--low { color: $severity-high; }
+}
+
+// Skill Gaps
+.skill-gaps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+
+    &__label {
+        @include section-label;
+    }
+
+    &__list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    &__empty {
+        font-size: 0.8rem;
+        color: $text-muted;
+    }
+}
+
+.skill-tag {
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 0.3rem 0.7rem;
+    border-radius: 0.45rem;
+    border: 1px solid;
+    cursor: default;
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+
+    &:hover {
+        transform: translateY(-1px);
+    }
+
+    &--high {
+        color: $severity-high;
+        background-color: rgba($severity-high, 0.1);
+        border-color: rgba($severity-high, 0.25);
+
+        &:hover { box-shadow: 0 0 16px -4px rgba($severity-high, 0.6); }
+    }
+
+    &--medium {
+        color: $severity-medium;
+        background-color: rgba($severity-medium, 0.1);
+        border-color: rgba($severity-medium, 0.25);
+
+        &:hover { box-shadow: 0 0 16px -4px rgba($severity-medium, 0.6); }
+    }
+
+    &--low {
+        color: $severity-low;
+        background-color: rgba($severity-low, 0.1);
+        border-color: rgba($severity-low, 0.25);
+
+        &:hover { box-shadow: 0 0 16px -4px rgba($severity-low, 0.6); }
+    }
+}
+
+// ── Resume PDF download ──────────────────────────────────────────────────────
+.resume-download-card {
+    @include glass-panel;
+    padding: 1rem;
+    border-color: rgba(167, 139, 250, 0.22);
+    background:
+        linear-gradient(145deg, rgba($violet, 0.16), rgba(59, 130, 246, 0.07)),
+        rgba($bg-card, 0.78);
+
+    &:hover {
+        border-color: rgba(167, 139, 250, 0.55);
+        box-shadow: 0 12px 32px -18px rgba(0, 0, 0, 0.7), 0 0 26px -8px rgba($violet, 0.6);
+    }
+}
+
+.resume-download-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 0.9rem;
+
+    strong { display: block; color: $text-primary; font-size: 0.84rem; }
+    small { display: block; margin-top: 0.2rem; color: $text-muted; font-size: 0.7rem; line-height: 1.35; }
+}
+
+.resume-download-icon {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    border: 1px solid rgba(167, 139, 250, 0.25);
+    border-radius: 0.7rem;
+    background: rgba(167, 139, 250, 0.12);
+    color: #b9a5ff;
+}
+
+.resume-download-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 42px;
+    padding: 0.65rem 0.8rem;
+    border: 0;
+    border-radius: 0.7rem;
+    background: linear-gradient(100deg, $violet, #9475f3);
+    color: #fff;
+    font: inherit;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 20px -8px rgba($violet, 0.7);
+    transition: box-shadow 0.25s ease, background 0.3s ease, opacity 0.2s ease;
+
+    &:hover:not(:disabled) { box-shadow: 0 12px 26px -8px rgba(148, 117, 243, 0.85); }
+    &:focus-visible { outline: 2px solid #c7b8ff; outline-offset: 2px; }
+    &:disabled { opacity: 0.75; cursor: wait; }
+
+    &--success { background: linear-gradient(100deg, #2f9e6a, #3fb97e); box-shadow: 0 8px 20px -8px rgba(47, 158, 106, 0.7); }
+    &--error { background: linear-gradient(100deg, #c2415a, #e0566f); }
+
+    &__content {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+    }
+}
+
+.resume-download-spinner {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #fff;
+    animation: spin 0.7s linear infinite;
+}
+
+.resume-download-message {
+    margin: 0.65rem 0 0;
+    overflow: hidden;
+    font-size: 0.7rem;
+    line-height: 1.5;
+
+    &.is-success { color: #65d6a1; }
+    &.is-error { color: #ff8585; }
+}
+
+// ── Responsive ───────────────────────────────────────────────────────────────
+@media (max-width: 1100px) {
+    .interview-layout {
+        grid-template-columns: 210px minmax(0, 1fr);
+        grid-template-areas:
+            'rail content'
+            'side content';
+    }
+
+    .interview-sidebar {
+        position: static;
+    }
+}
+
+@media (max-width: 860px) {
+    .interview-page {
+        padding: 1rem;
+    }
+
+    .interview-layout {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+            'side'
+            'rail'
+            'content';
+        gap: 1rem;
+    }
+
+    .interview-rail,
+    .interview-sidebar {
+        position: static;
+    }
+
+    .interview-sidebar {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
+    }
+
+    .interview-nav {
+        padding: 1rem 0.75rem;
+
+        &__items {
+            flex-direction: row;
+            overflow-x: auto;
+            gap: 0.4rem;
+        }
+
+        &__item {
+            width: auto;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+    }
+
+    .interview-content {
+        min-height: 0;
+        padding: 1.25rem 1.1rem 1.75rem;
+    }
+}
+
+@media (max-width: 560px) {
+    .interview-sidebar {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .content-header {
+        flex-wrap: wrap;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .loading-screen__spinner,
+    .resume-download-spinner {
+        animation-duration: 2s;
+    }
+}

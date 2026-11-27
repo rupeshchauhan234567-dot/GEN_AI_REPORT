@@ -1,0 +1,9 @@
+{
+  "name": "ai-career-learning-hub",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install --prefix Backend && npm install --prefix Frontend",
+    "build": "npm run build --prefix Frontend",
+    "test:backend": "npm test --prefix Backend"
+  }
+}
